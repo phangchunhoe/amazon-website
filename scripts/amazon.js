@@ -1,3 +1,7 @@
+// Import Datas from JSON or JS files
+import {cart, addToCart} from '../data/carts.js';
+import {products} from '../data/products.js';
+
 let productsHTML = '';
 
 products.forEach((product) => {
@@ -56,6 +60,7 @@ products.forEach((product) => {
 
 document.querySelector('.products-grid').innerHTML = productsHTML;
 
+// Functions for the 'Add to Cart' button
 document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     button.addEventListener('click', () => {
         const productId = button.dataset.productId;
@@ -66,43 +71,39 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
         let totalItem = 0;
 
         // Check whether there is matching items
-        cart.forEach((item) => {
-            if (productId === item.Id) {
-                matchingItem = item;
-            }
-        });
-
-        if (matchingItem) {
-            matchingItem.quantity += quantityValue;
-        }
-        else {
-            // Else, make a new index for it
-            cart.push({
-                Id: productId,
-                quantity: quantityValue
-            });  
-        }
+        addToCart(matchingItem, productId, quantityValue);
         console.log(cart)
 
         // Find the total number of items in cart
-        cart.forEach((item) => {
-            totalItem += item.quantity;
-        })
-
-        if (totalItem) {
-            document.querySelector('.cart-quantity').innerText = totalItem;
-        } else {
-            document.querySelector('.cart-quantity').innerText = '';
-        };
-
-        // Reset numbers back to their original form
-        document.querySelector(`.js-quantity-selector-${productId}`).value = 1;
+        totalItems(totalItem, cart, productId);
 
         // Display 'Added' check
-        addedToCart.classList.add('is-added-to-cart');
-
-        setTimeout(() => {
-            addedToCart.classList.remove('is-added-to-cart');
-        }, 1500);
+        displayAdded(addedToCart)
+        
     })
 })
+
+
+function totalItems(totalItem, cart, productId) {
+    cart.forEach((item) => {
+        totalItem += item.quantity;
+    })
+
+    if (totalItem) {
+        document.querySelector('.cart-quantity').innerText = totalItem;
+    } else {
+        document.querySelector('.cart-quantity').innerText = '';
+    };
+
+    // Reset numbers back to their original form
+    document.querySelector(`.js-quantity-selector-${productId}`).value = 1;
+
+};
+
+function displayAdded(addedToCart) {
+    addedToCart.classList.add('is-added-to-cart');
+
+    setTimeout(() => {
+        addedToCart.classList.remove('is-added-to-cart');
+    }, 1500);
+}
