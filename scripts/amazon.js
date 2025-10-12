@@ -1,8 +1,12 @@
 // Import Datas from JSON or JS files
 import {cart, addToCart} from '../data/carts.js';
 import {products} from '../data/products.js';
+import {formatCurrency} from './utils/money.js'
 
 let productsHTML = '';
+
+// Starting Codes
+displayInitialCartQuantity();
 
 products.forEach((product) => {
 
@@ -26,7 +30,7 @@ products.forEach((product) => {
           </div>
 
           <div class="product-price">
-            $${(product.priceCents / 100).toFixed(2)}
+            $${formatCurrency(product.priceCents)}
           </div>
 
           <div class="product-quantity-container">
@@ -60,6 +64,8 @@ products.forEach((product) => {
 
 document.querySelector('.products-grid').innerHTML = productsHTML;
 
+// else document.querySelector
+
 // Functions for the 'Add to Cart' button
 document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     button.addEventListener('click', () => {
@@ -89,11 +95,7 @@ function totalItems(totalItem, cart, productId) {
         totalItem += item.quantity;
     })
 
-    if (totalItem) {
-        document.querySelector('.cart-quantity').innerText = totalItem;
-    } else {
-        document.querySelector('.cart-quantity').innerText = '';
-    };
+    document.querySelector('.cart-quantity').innerText = totalItem;
 
     // Reset numbers back to their original form
     document.querySelector(`.js-quantity-selector-${productId}`).value = 1;
@@ -106,4 +108,14 @@ function displayAdded(addedToCart) {
     setTimeout(() => {
         addedToCart.classList.remove('is-added-to-cart');
     }, 1500);
+}
+
+function displayInitialCartQuantity() {
+  // Display total cart items 
+  let initialTotalCartItem = 0;
+  cart.forEach((cartItems) => {
+    initialTotalCartItem += cartItems.quantity;
+  })
+
+  document.querySelector('.cart-quantity').innerText = initialTotalCartItem;
 }
