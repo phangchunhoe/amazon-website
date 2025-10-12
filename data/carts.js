@@ -24,5 +24,10 @@ export function addToCart(matchingItem, productId, quantityValue) {
             quantity: quantityValue
         });  
     }
-
 };
+
+export function removeFromCart(productId) {
+    cart.forEach((cartItem, index) => {
+        if (productId === cartItem.Id) cart.splice(index, 1);
+    })
+}
