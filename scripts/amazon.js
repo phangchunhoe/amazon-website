@@ -1,7 +1,7 @@
 // Import Datas from JSON or JS files
-import {cart, addToCart} from '../data/carts.js';
+import {cart, addToCart, calculateTotal} from '../data/carts.js';
 import {products} from '../data/products.js';
-import {formatCurrency} from './utils/money.js'
+import {formatCurrency} from './utils/money.js';
 
 let productsHTML = '';
 
@@ -78,10 +78,15 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
 
         // Check whether there is matching items
         addToCart(matchingItem, productId, quantityValue);
-        console.log(cart)
+        console.log(cart);
 
         // Find the total number of items in cart
-        totalItems(totalItem, cart, productId);
+        document.querySelector('.cart-quantity').innerText = calculateTotal(cart);
+        // Reset values nacl to original
+        document.querySelector(`.js-quantity-selector-${productId}`).value = 1;
+
+
+
 
         // Display 'Added' check
         displayAdded(addedToCart)
@@ -90,17 +95,6 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
 })
 
 
-function totalItems(totalItem, cart, productId) {
-    cart.forEach((item) => {
-        totalItem += item.quantity;
-    })
-
-    document.querySelector('.cart-quantity').innerText = totalItem;
-
-    // Reset numbers back to their original form
-    document.querySelector(`.js-quantity-selector-${productId}`).value = 1;
-
-};
 
 function displayAdded(addedToCart) {
     addedToCart.classList.add('is-added-to-cart');
