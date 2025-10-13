@@ -9,7 +9,6 @@ let productsHTML = '';
 displayInitialCartQuantity();
 
 products.forEach((product) => {
-
     productsHTML += `        
         <div class="product-container">
           <div class="product-image-container">
@@ -35,16 +34,16 @@ products.forEach((product) => {
 
           <div class="product-quantity-container">
             <select class="js-quantity-selector-${product.id}">
-              <option selected value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
+				<option selected value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
             </select>
           </div>
 
