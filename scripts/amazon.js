@@ -72,20 +72,16 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
         const quantityValue = Number(document.querySelector(`.js-quantity-selector-${productId}`).value);
         const addedToCart = button.closest('.product-container')?.querySelector('.added-to-cart');
 
-        let matchingItem;
         let totalItem = 0;
 
         // Check whether there is matching items
-        addToCart(matchingItem, productId, quantityValue);
+        addToCart(productId, quantityValue);
         console.log(cart);
 
         // Find the total number of items in cart
         document.querySelector('.cart-quantity').innerText = calculateTotal(cart);
         // Reset values nacl to original
         document.querySelector(`.js-quantity-selector-${productId}`).value = 1;
-
-
-
 
         // Display 'Added' check
         displayAdded(addedToCart)

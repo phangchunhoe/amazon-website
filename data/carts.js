@@ -8,8 +8,11 @@ export let cart = JSON.parse(localStorage.getItem('cart')) || [{
     deliveryOptionId: '2'
 }];
 
-export function addToCart(matchingItem, productId, quantityValue) {
+export function addToCart(productId, quantityValue) {
     // Check whether there is matching items
+
+    let matchingItem;
+
     cart.forEach((item) => {
         if (productId === item.Id) {
             matchingItem = item;
@@ -44,4 +47,19 @@ export function calculateTotal(cart) {
         total += cartItem.quantity;
     })
     return total;
+}
+
+export function updateDeliveryOption(productId, deliveryOptionId) {
+    let matchingItem;
+
+    cart.forEach((item) => {
+        if (productId === item.Id) {
+            matchingItem = item;
+        }
+    })
+
+    matchingItem.deliveryOptionId = deliveryOptionId;
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+
 }
