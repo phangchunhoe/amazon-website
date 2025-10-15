@@ -2,8 +2,9 @@
 import {cart, removeFromCart, calculateTotal, updateDeliveryOption} from '../../data/carts.js';
 import {products, getProduct} from '../../data/products.js';
 import formatCurrency from '../utils/money.js'
-import {deliveryOptions} from '../../data/deliveryOptions.js'
+import {deliveryOptions, getDeliveryOption} from '../../data/deliveryOptions.js'
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+import {renderPaymentSummary} from './paymentSummary.js';
 
 let cartSummaryHTML = '';
 
@@ -74,6 +75,7 @@ export function renderOrderSummary() {
             const removingContainer = document.querySelector(`.js-cart-item-container-${productId}`);
             removingContainer.remove();
             displayTotalItems(cart);
+            renderPaymentSummary();
         });
 
     });
@@ -83,6 +85,7 @@ export function renderOrderSummary() {
             const {productId, deliveryOptionId} = element.dataset;
             updateDeliveryOption(productId, deliveryOptionId);
             renderOrderSummary();
+            renderPaymentSummary();
         })
     })
 
@@ -97,11 +100,9 @@ function displayTotalItems(cart) {
     let totalItems = calculateTotal(cart);
     if (totalItems > 1) {
         document.querySelector('.js-total-checkout-items').innerText = `${calculateTotal(cart)} items`;
-        document.querySelector('.js-order-summary-items').innerText = `Items (${totalItems}):`;
     } 
     else if (totalItems <= 1 && totalItems >= 0) {
         document.querySelector('.js-total-checkout-items').innerText = `${calculateTotal(cart)} item`;
-        document.querySelector('.js-order-summary-items').innerText = `Item (${totalItems}):`;
     }
 }
 
@@ -138,15 +139,9 @@ function deliveryOptionsHTML(matchingProduct, cartItem) {
     return html;
 }
 
-function displayExpectedDeliveryDate(deliveryOptionId, deliveryOptions) {
+function displayExpectedDeliveryDate(deliveryOptionId) {
 
-    let deliveryOption;
-
-    deliveryOptions.forEach((option) => {
-        if (option.id === deliveryOptionId) {
-            deliveryOption = option;
-        }
-    });
+    let deliveryOption = getDeliveryOption(deliveryOptionId)
 
     const today = dayjs();
     const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
