@@ -1,17 +1,16 @@
 // Import Data from other parts
-import {cart, removeFromCart, calculateTotal, updateDeliveryOption} from '../../data/carts.js';
+import {cart, removeFromCart, calculateTotal, updateDeliveryOption, saveNewQuantity} from '../../data/carts.js';
 import {products, getProduct} from '../../data/products.js';
 import formatCurrency from '../utils/money.js'
 import {deliveryOptions, getDeliveryOption} from '../../data/deliveryOptions.js'
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import {renderPaymentSummary} from './paymentSummary.js';
 
-let cartSummaryHTML = '';
 
 renderOrderSummary();
 
 export function renderOrderSummary() {
-    cartSummaryHTML = '';
+    let cartSummaryHTML = '';
     displayTotalItems(cart);
 
 
@@ -41,11 +40,11 @@ export function renderOrderSummary() {
                     <div class="product-price">
                         $${formatCurrency(matchingProduct.priceCents)}
                     </div>
-                    <div class="product-quantity">
-                        <span>
-                        Quantity: <span class="quantity-label">${cartItem.quantity}</span>
+                    <div class="product-quantity js-product-quantity">
+                        <span class="js-quantity-value">
+                        Quantity: <span class="quantity-label js-quantity-label">${cartItem.quantity}</span>
                         </span>
-                        <span class="update-quantity-link link-primary">
+                        <span class="update-quantity-link link-primary js-update-link" data-product-id="${matchingProduct.id}">
                         Update
                         </span>
                         <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${matchingProduct.id}">
@@ -87,8 +86,57 @@ export function renderOrderSummary() {
             renderOrderSummary();
             renderPaymentSummary();
         })
-    })
+    });
 
+    document.querySelectorAll('.js-update-link').forEach((update) => {
+        update.addEventListener('click', () => {
+            const productId = update.dataset.productId;
+            const quantityLabel = update.closest('.js-product-quantity')?.querySelector('.js-quantity-label');
+        
+            // read current quantity (fallback to 1)
+            const currentQuantity = quantityLabel ? Number(quantityLabel.innerText.trim()) || 1 : 1;
+        
+            // create a real input element
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.min = '1';
+            quantityInput.value = currentQuantity;
+            quantityInput.className = 'js-quantity-input quantity-input';
+        
+            // put input into DOM and focus
+            if (quantityLabel) {
+            quantityLabel.innerHTML = '';
+            quantityLabel.appendChild(quantityInput);
+            quantityInput.focus();
+            }
+        
+            // stop clicks on input from bubbling to the update button
+            quantityInput.addEventListener('click', (ev) => ev.stopPropagation());
+        
+            // helper to commit changes
+            const commit = (value) => {
+            const newQty = Math.max(1, Number(value) || 1);
+            saveNewQuantity(productId, newQty);
+            // re-render UI and payment summary to reflect changes
+            renderOrderSummary();
+            renderPaymentSummary();
+            };
+        
+            // commit on Enter, cancel on Escape
+            quantityInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                commit(quantityInput.value);
+            } else if (event.key === 'Escape') {
+                renderOrderSummary(); // cancel edit
+            }
+            });
+        
+            // commit when user clicks away
+            quantityInput.addEventListener('blur', () => {
+            commit(quantityInput.value);
+            }, { once: true });
+        });
+    });
 }
 
 

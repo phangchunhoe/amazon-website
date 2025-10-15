@@ -8,6 +8,17 @@ export let cart = JSON.parse(localStorage.getItem('cart')) || [{
     deliveryOptionId: '2'
 }];
 
+export function saveNewQuantity(productId, quantity) {
+  for (let i = 0; i < cart.length; i++) {
+    // compare using the same property name the cart uses (Id), normalize to string
+    if (String(cart[i].Id) === String(productId)) {
+      cart[i].quantity = quantity;
+      localStorage.setItem('cart', JSON.stringify(cart));
+      break;
+    }
+  }
+}
+
 export function addToCart(productId, quantityValue) {
     // Check whether there is matching items
 
