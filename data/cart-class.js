@@ -1,5 +1,5 @@
 class Cart {
-    cartItems = JSON.parse(localStorage.getItem(this.localStorageKey)) || [{
+    cartItems = JSON.parse(localStorage.getItem(this.#localStorageKey)) || [{
             Id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
             quantity: 1,
             deliveryOptionId: '1'
@@ -9,9 +9,11 @@ class Cart {
             deliveryOptionId: '2'
     }];
 
+    #localStorageKey;
+
     constructor(localStorageKey) {
         // console.log('Constructing...');
-        this.localStorageKey = localStorageKey;
+        this.#localStorageKey = localStorageKey;
 
         this.cartItems = [{
             Id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -24,14 +26,12 @@ class Cart {
         }];
     }
 
-    localStorageKey = undefined;
-
     saveNewQuantity(productId, quantity) {
         for (let i = 0; i < this.cartItem.length; i++) {
             // compare using the same property name the cart uses (Id), normalize to string
             if (String(this.cartItems[i].Id) === String(productId)) {
                 this.cartItems[i].quantity = quantity;
-                localStorage.setItem(this.localStorageKey, JSON.stringify(this.cartItems));
+                localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItems));
             break;
             };
         };
@@ -59,13 +59,13 @@ class Cart {
                 deliveryOptionId: '1'
             });  
         }
-        localStorage.setItem(this.localStorageKey, JSON.stringify(this.cartItem));
+        localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItem));
     };
 
     removeFromCart(productId) {
         this.cartItem.forEach((cartItem, index) => {
             if (productId === cartItem.Id) this.cartItem.splice(index, 1);
-            localStorage.setItem(this.localStorageKey, JSON.stringify(this.cartItem));
+            localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItem));
         })
     };
 
@@ -88,13 +88,13 @@ class Cart {
         })
 
         matchingItem.deliveryOptionId = deliveryOptionId;
-        localStorage.setItem(this.localStorageKey, JSON.stringify(this.cartItem));
+        localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItem));
     };
 }
 
 const cart = new Cart('cart-oop');
 const businessCart = new Cart('cart-business');
 
-
+// console.log(cart.localStorageKey);
 console.log(cart);
 console.log(businessCart);
