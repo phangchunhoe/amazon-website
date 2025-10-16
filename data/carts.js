@@ -8,6 +8,19 @@ export let cart = JSON.parse(localStorage.getItem('cart')) || [{
     deliveryOptionId: '2'
 }];
 
+export function loadCart(functi) {
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', () => {
+        console.log('loaded cart');
+        console.log(xhr.response);
+        functi();
+
+    })
+    xhr.open('GET', 'https://supersimplebackend.dev/cart');
+    xhr.send();
+};
+
+
 export function saveNewQuantity(productId, quantity) {
   for (let i = 0; i < cart.length; i++) {
     // compare using the same property name the cart uses (Id), normalize to string

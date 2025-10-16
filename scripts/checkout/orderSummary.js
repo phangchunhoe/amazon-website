@@ -21,7 +21,7 @@ export function renderOrderSummary() {
         const matchingProduct = getProduct(productId);
 
         if (!matchingProduct) {
-            console.warn('Product not found for cart item:', cartItem);
+            // console.warn('Product not found for cart item:', cartItem);
             return
         }
 

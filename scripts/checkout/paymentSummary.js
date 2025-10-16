@@ -11,7 +11,7 @@ export function renderPaymentSummary() {
     cart.forEach((cartItem) => {
         const product = getProduct(cartItem.Id);
         if (!product) {
-            console.warn('Product not found in your cart item:', cartItem)
+            // console.warn('Product not found in your cart item:', cartItem)
             return
         }
         productPriceCents += product.priceCents * cartItem.quantity;
