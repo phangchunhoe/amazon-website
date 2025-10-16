@@ -38,7 +38,7 @@ export function renderOrderSummary() {
                         ${matchingProduct.name}
                     </div>
                     <div class="product-price">
-                        $${formatCurrency(matchingProduct.priceCents)}
+                        ${matchingProduct.getPrice()}
                     </div>
                     <div class="product-quantity js-product-quantity">
                         <span class="js-quantity-value">
@@ -131,12 +131,13 @@ export function renderOrderSummary() {
             }
             });
         
-            // commit when user clicks away
+            // Blur: defer commit to avoid re-entrancy issues (fixes NotFoundError)
             quantityInput.addEventListener('blur', () => {
-            commit(quantityInput.value);
+                // schedule after current event stack so browser finishes processing blur
+                setTimeout(() => commit(quantityInput.value), 0);
             }, { once: true });
         });
-    });
+        });
 }
 
 
