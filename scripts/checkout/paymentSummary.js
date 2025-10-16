@@ -10,6 +10,10 @@ export function renderPaymentSummary() {
     let shippingPriceCents = 0;
     cart.forEach((cartItem) => {
         const product = getProduct(cartItem.Id);
+        if (!product) {
+            console.warn('Product not found in your cart item:', cartItem)
+            return
+        }
         productPriceCents += product.priceCents * cartItem.quantity;
 
         const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId)

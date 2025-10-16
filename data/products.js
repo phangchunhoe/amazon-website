@@ -64,7 +64,7 @@ export function getProduct(productId) {
   let matchingProduct;
 
   products.forEach((product) => {
-		if (productId === product.id) {
+		if (String(productId) === String(product.id)) {
 			matchingProduct = product;
 		}
   });
@@ -72,6 +72,27 @@ export function getProduct(productId) {
 	return matchingProduct;
 }
 
+// This is for backend
+
+export let products = [];
+
+export function loadProducts(functi) {
+  const xhr = new XMLHttpRequest();
+  xhr.addEventListener('load', () => {
+      products = JSON.parse(xhr.response).map((productDetails) => {
+        if (!productDetails.type) return new Product(productDetails);
+        else if (productDetails.type === 'clothing') return new Clothing(productDetails);
+        else if (productDetails.type === 'appliance') return new Appliance(productDetails);
+      });
+      console.log('loaded products')
+      functi();
+
+  })
+  xhr.open('GET', 'https://supersimplebackend.dev/products');
+  xhr.send();
+};
+
+/*
 export const products = [
   {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -749,3 +770,4 @@ export const products = [
   else if (productDetails.type === 'appliance') return new Appliance(productDetails);
   
 });
+*/

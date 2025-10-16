@@ -20,6 +20,11 @@ export function renderOrderSummary() {
 
         const matchingProduct = getProduct(productId);
 
+        if (!matchingProduct) {
+            console.warn('Product not found for cart item:', cartItem);
+            return
+        }
+
         // This is used for the displayExpectedDeliveryDate(deliveryOptionId, deliveryOptions) function
         const deliveryOptionId = cartItem.deliveryOptionId;
         
