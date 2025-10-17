@@ -1,7 +1,8 @@
 import {cart, calculateTotal} from '../../data/carts.js';
 import {getProduct} from '../../data/products.js';
 import {getDeliveryOption} from '../../data/deliveryOptions.js';
-import formatCurrency from '../utils/money.js'
+import formatCurrency from '../utils/money.js';
+import {addOrder} from '../../data/orders.js'
 
 
 
@@ -56,7 +57,7 @@ export function renderPaymentSummary() {
             <div class="payment-summary-money">$${formatCurrency(totalCents)}</div>
         </div>
 
-        <button class="place-order-button button-primary">
+        <button class="place-order-button button-primary js-place-order">
             Place your order
         </button>
 
@@ -64,6 +65,49 @@ export function renderPaymentSummary() {
 
     document.querySelector('.js-payment-summary').innerHTML = paymentSummaryHTML;
     displayTotalItems(cart);
+
+    // attach place-order handler (map Id -> productId and handle errors safely)
+    const placeOrderButton = document.querySelector('.js-place-order');
+    if (placeOrderButton) {
+        placeOrderButton.addEventListener('click', async (event) => {
+                event.preventDefault?.();
+                placeOrderButton.disabled = true;
+
+                // transform cart to API expected shape: productId (not Id)
+                const payloadCart = cart.map(ci => ({
+                productId: String(ci.Id),
+                quantity: Number(ci.quantity) || 0,
+                deliveryOptionId: ci.deliveryOptionId
+            }));
+
+            try {
+                const response = await fetch('https://supersimplebackend.dev/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    // SEND the mapped payloadCart, not the original cart
+                    body: JSON.stringify({ cart: payloadCart })
+                });
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Server error ${response.status}: ${text}`);
+                }
+
+                const orders = await response.json();
+                addOrder(orders)
+
+                // optional: clear cart and/or show success UI here
+                // localStorage.removeItem('cart');
+                // window.location.href = '/orders.html';
+            } catch (err) {
+                console.error('Place order failed', err);
+                // re-enable button so user can retry
+                placeOrderButton.disabled = false;
+            };
+
+            window.location.href = 'orders.html'
+        });
+    }
 
 }
 
