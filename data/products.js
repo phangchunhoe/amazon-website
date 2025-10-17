@@ -88,6 +88,8 @@ export function loadProductsFetch() {
 
         console.log('Loaded products using fetch()');
       });
+  }).catch((error) => {
+    console.log('Unexpected Error. Please try again later.');
   });
 
   return promise;

@@ -11,10 +11,7 @@ export let cart = JSON.parse(localStorage.getItem('cart')) || [{
 export function loadCart(functi) {
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', () => {
-        console.log('loaded cart');
-        console.log(xhr.response);
         functi();
-
     })
     xhr.open('GET', 'https://supersimplebackend.dev/cart');
     xhr.send();
