@@ -76,8 +76,28 @@ export function getProduct(productId) {
 
 export let products = [];
 
+// Returns a promise directly (only need to run this function for the promise)
+export function loadProductsFetch() {
+  const promise = fetch('https://supersimplebackend.dev/products').then((response) => {
+    return response.json();
+  }).then((productsData) => {
+      products = productsData.map((productDetails) => {
+        if (!productDetails.type) return new Product(productDetails);
+        else if (productDetails.type === 'clothing') return new Clothing(productDetails);
+        else if (productDetails.type === 'appliance') return new Appliance(productDetails);
+
+        console.log('Loaded products using fetch()');
+      });
+  });
+
+  return promise;
+};
+
+// This fetches the products using callback
 export function loadProducts(functi) {
   const xhr = new XMLHttpRequest();
+
+  // Callback
   xhr.addEventListener('load', () => {
       products = JSON.parse(xhr.response).map((productDetails) => {
         if (!productDetails.type) return new Product(productDetails);
